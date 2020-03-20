@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/ABettega/jobsity-chat-test/issues"
   },
-  "homepage": "https://github.com/ABettega/jobsity-chat-test#readme"
+  "homepage": "https://github.com/ABettega/jobsity-chat-test#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  }
 }
