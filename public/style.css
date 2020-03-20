@@ -1,0 +1,14 @@
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+li {
+  padding: 5px 5px;
+  border: 1px solid black;
+  border-top: 0px;
+  list-style: none;
+}
+
+.initial-message {
+  border-top: 1px solid black;
+}
