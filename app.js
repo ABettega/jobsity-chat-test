@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const logger = require('morgan');
+const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -41,13 +42,13 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.get('/*/', (req, res) => res.sendFile(path.join(__dirname)));
+app.get('/*/', (req, res) => res.sendFile(__dirname));
 app.use(flash());
 
 // app.use('/auth', require('./routes/auth'));
 
 app.get('*', (req, res) => {
-  res.sendFile(`${__dirname}/public/index.html`);
+  res.sendFile(`${__dirname}/public/chat.html`);
 });
 
 app.use((req, res) => {
