@@ -3,12 +3,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  name: String,
-  auth: {
-    username: { type: String, unique: true },
-    password: String,
-    salt: String,
-  },
+  username: { type: String, unique: true },
+  password: String,
 }, {
   timestamps: {
     createdAt: 'created_at',

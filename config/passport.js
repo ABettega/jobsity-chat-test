@@ -17,9 +17,9 @@ passport.deserializeUser((id, cb) => {
 });
 
 passport.use(new LocalStrategy((username, password, next) => {
-  User.findOne({ 'auth.username': username })
+  User.findOne({ username })
     .then((user) => {
-      if (!user || !user.auth.password || !bcryptjs.compareSync(password, user.auth.password)) {
+      if (!user || !user.password || !bcryptjs.compareSync(password, user.password)) {
         return next(null, false, { message: 'Incorrect username or password!' });
       }
       return next(null, user);

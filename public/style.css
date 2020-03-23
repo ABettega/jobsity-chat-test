@@ -9,6 +9,34 @@ li {
   list-style: none;
 }
 
+.nav-item {
+  border: 2px solid black;
+  width: fit-content;
+}
+
 .initial-message {
   border-top: 1px solid black;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+}
+
+.user-msg {
+  font-weight: bold;
+}
+
+.msg-window {
+  height: 5%;
+  position: absolute;
+  display: flex;
+}
+
+.chat-box {
+  width: 80%;
+}
+
+.chat-button {
+  width: 5%;
 }

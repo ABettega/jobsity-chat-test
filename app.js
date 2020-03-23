@@ -2,32 +2,33 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const logger = require('morgan');
-const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-const flash = require('connect-flash');
 const passport = require('./config/passport');
-const socketio = require('socket.io');
+const hbs = require('hbs');
+const axios = require('axios');
 
 const app = express();
+
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
 mongoose.connect(`${process.env.MONGODB_URI}jobsity-chat`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
   useFindAndModify: false,
-}).catch(() => console.log('Ocorreu um erro ao conectar com o banco de dados!', 'M00001'));
+}).catch(() => console.log('Error while connecting to Database! Make sure Mongo is running on your server!', 'M00001'));
 
-// Middleware Setup
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false,
 }));
 app.use(cookieParser());
+app.set('views', __dirname + '/views');
+app.set('view engine', 'hbs');
 
 app.use(express.static(__dirname + '/public'));
 
@@ -42,36 +43,41 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.get('/*/', (req, res) => res.sendFile(__dirname));
-app.use(flash());
 
-// app.use('/auth', require('./routes/auth'));
-
-app.get('*', (req, res) => {
-  res.sendFile(`${__dirname}/public/chat.html`);
+app.use(function(req, res, next){
+  res.io = io;
+  next();
 });
 
-app.use((req, res) => {
-  res.status(404);
-  res.render('not-found');
-});
+app.use('/auth', require('./routes/auth'));
+app.use('/', require('./routes/index'));
 
-app.use((err, req, res) => {
-  console.error('ERROR', req.method, req.path, err);
+// app.get('*', (req, res) => {
+//   res.redirect('/');
+// });
 
-  if (!res.headersSent) {
-    res.status(500);
-    res.render('error');
-  }
-});
+server.listen(process.env.PORT);
 
-const expressServer = app.listen(process.env.PORT);
-const server = socketio(expressServer);
-
-server.of('/').on('connection', (socket) => {
+io.on('connection', (socket) => {
   socket.emit('messageToClients', { text: 'Welcome to the chat server!', initial: true });
 
-  socket.on('newMessageToServer', ({ text }) => {
-    server.emit('messageToClients', { text });
+  socket.on('newMessageToServer', ({ text, user }) => {
+    if (text[0] === '/') {
+      const splitCommand = text.split('=');
+      socket.emit('messageToClients', { text, user });
+      if (splitCommand[0] === '/stock') {
+        axios.get(`https://stooq.com/q/l/?s=${splitCommand[1]}&f=sd2t2ohlcv&h&e=csv`)
+          .then(result => {
+            const splitResult = result.data.split('\n')[1].split(',');
+            socket.emit('messageToClients', { user: 'BOT', text: `${splitResult[0]} quote is $${splitResult[6]} per share!` });
+          })
+          .catch((e) => {
+            console.log(e);
+            socket.emit('messageToClients', { user: 'SYSTEM', text: 'An error occurred while getting information about your stock!' });
+          });
+      }
+    } else {
+      io.emit('messageToClients', { user, text });
+    }
   });
 });

@@ -1,0 +1,18 @@
+<div>
+  <ul id="chat-log">
+
+  </ul>
+  <form id="msg-window">
+    <div>
+      <input id="usr-msg" class="chat-box" type="text" placeholder="Enter your message"/>
+    </div>
+    <div>
+      <input class="chat-button" type="submit" value="Send!"/>
+    </div>
+  </form>
+</div>
+
+<input hidden id="username" value="{{user.username}}">
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="../scripts.js"></script>
