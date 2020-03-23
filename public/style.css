@@ -1,5 +1,11 @@
 body {
+  margin: 0;
+  padding: 0;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+ul {
+  padding-right: 5vw;
 }
 
 li {
@@ -28,9 +34,10 @@ li {
 }
 
 .msg-window {
-  height: 5%;
-  position: absolute;
   display: flex;
+  width: 90vw;
+  max-width: 100%;
+  margin: 0 5vw;
 }
 
 .chat-box {
@@ -38,5 +45,11 @@ li {
 }
 
 .chat-button {
-  width: 5%;
+  width: 20%;
+}
+
+.outside-container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
 }
