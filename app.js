@@ -52,10 +52,6 @@ app.use(function(req, res, next){
 app.use('/auth', require('./routes/auth'));
 app.use('/', require('./routes/index'));
 
-// app.get('*', (req, res) => {
-//   res.redirect('/');
-// });
-
 server.listen(process.env.PORT);
 
 io.on('connection', (socket) => {
