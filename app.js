@@ -80,7 +80,8 @@ io.on('connection', (socket) => {
           });
       }
     } else {
-      io.emit('messageToClients', { user, text });
+      if (text.length > 0)
+        io.emit('messageToClients', { user, text });
     }
   });
 });
