@@ -11,9 +11,25 @@ document.querySelector('#msg-window').addEventListener('submit', (event) => {
 })
 
 socket.on('messageToClients', ({ text, initial, user }) => {
+  const chatLog = document.querySelector('#chat-log');
+  const date = new Date();
+  var hours = `${date.getHours()}`;
+  var minutes = `${date.getMinutes()}`;
+  var seconds = `${date.getSeconds()}`;
+  if (hours.length < 2)
+    hours = `0${hours}`;
+  if (minutes.length < 2)
+    minutes = `0${minutes}`;
+  if (seconds.length < 2)
+    seconds = `0${seconds}`;
+  const time = `${hours}:${minutes}:${seconds}`;
   if (initial) {
-    document.querySelector('#chat-log').innerHTML += `<li class="initial-message">${text}</li>`;
+    chatLog.innerHTML += `<li class="initial-message message">${text}<span class="time">${time}</span></li>`;
   } else {
-    document.querySelector('#chat-log').innerHTML += `<li><span class="user-msg">${user}</span>: ${text}</li>`;
+    chatLog.innerHTML += `<li class="message"><span><span class="user-msg">${user}</span>: ${text}</span><span class="time">${time}</span></li>`;
+  }
+  if (chatLog.childElementCount > 49) {
+    chatLog.removeChild(chatLog.firstElementChild);
+    chatLog.firstElementChild.classList.add('initial-message');
   }
 })

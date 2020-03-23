@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: small;
 }
 
 ul {
@@ -52,4 +53,14 @@ li {
   position: absolute;
   display: flex;
   justify-content: center;
+}
+
+.message {
+  display: flex;
+  justify-content: space-between;
+}
+
+.time {
+  align-content: flex-end;
+  font-size: smaller;
 }

@@ -69,11 +69,14 @@ io.on('connection', (socket) => {
         axios.get(`https://stooq.com/q/l/?s=${splitCommand[1]}&f=sd2t2ohlcv&h&e=csv`)
           .then(result => {
             const splitResult = result.data.split('\n')[1].split(',');
-            socket.emit('messageToClients', { user: 'BOT', text: `${splitResult[0]} quote is $${splitResult[6]} per share!` });
+            if (splitResult[6] === 'N/D') {
+              socket.emit('messageToClients', { user: 'BOT', text: `The stock ${splitResult[0]} was not found!` });
+            } else {
+              socket.emit('messageToClients', { user: 'BOT', text: `${splitResult[0]} quote is $${splitResult[6]} per share!` });
+            }
           })
           .catch((e) => {
-            console.log(e);
-            socket.emit('messageToClients', { user: 'SYSTEM', text: 'An error occurred while getting information about your stock!' });
+            socket.emit('messageToClients', { user: 'BOT', text: 'An error occurred while getting information about your stock!' });
           });
       }
     } else {
