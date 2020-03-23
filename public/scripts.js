@@ -5,13 +5,6 @@ const username = document.querySelector('#username').value;
 document.querySelector('#msg-window').addEventListener('submit', (event) => {
   event.preventDefault();
   const msgField = document.querySelector('#usr-msg');
-  socket.emit('newMessageToServer', { text: msgField.value, user: username, initial: true });
-  msgField.value = '';
-  msgField.focus();
-})
-
-socket.on('messageToClients', ({ text, initial, user }) => {
-  const chatLog = document.querySelector('#chat-log');
   const date = new Date();
   var hours = `${date.getHours()}`;
   var minutes = `${date.getMinutes()}`;
@@ -23,12 +16,19 @@ socket.on('messageToClients', ({ text, initial, user }) => {
   if (seconds.length < 2)
     seconds = `0${seconds}`;
   const time = `${hours}:${minutes}:${seconds}`;
+  socket.emit('newMessageToServer', { text: msgField.value, user: username, initial: true, time });
+  msgField.value = '';
+  msgField.focus();
+})
+
+socket.on('messageToClients', ({ text, initial, user, time }) => {
+  const chatLog = document.querySelector('#chat-log');
   if (initial) {
-    chatLog.innerHTML += `<li class="initial-message message">${text}<span class="time">${time}</span></li>`;
+    chatLog.innerHTML += `<li class="initial-message message">${text}</li>`;
   } else {
     chatLog.innerHTML += `<li class="message"><span><span class="user-msg">${user}</span>: ${text}</span><span class="time">${time}</span></li>`;
   }
-  if (chatLog.childElementCount > 49) {
+  if (chatLog.childElementCount > 10) {
     chatLog.removeChild(chatLog.firstElementChild);
     chatLog.firstElementChild.classList.add('initial-message');
   }

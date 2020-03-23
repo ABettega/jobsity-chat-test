@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('./config/passport');
+const { addMessage, getMessages } = require('./config/messageLog');
 const hbs = require('hbs');
 const axios = require('axios');
 
@@ -56,11 +57,19 @@ server.listen(process.env.PORT);
 
 io.on('connection', (socket) => {
   socket.emit('messageToClients', { text: 'Welcome to the chat server!', initial: true });
-
-  socket.on('newMessageToServer', ({ text, user }) => {
+  
+  getMessages()
+    .then(result => {
+      result.reverse().forEach(message => {
+        socket.emit('messageToClients', { text: message.text, user: message.username, time: message.timestamp });
+      });
+    })
+    .catch();
+  
+  socket.on('newMessageToServer', ({ text, user, time }) => {
     if (text[0] === '/') {
       const splitCommand = text.split('=');
-      socket.emit('messageToClients', { text, user });
+      socket.emit('messageToClients', { text, user, time });
       if (splitCommand[0] === '/stock') {
         axios.get(`https://stooq.com/q/l/?s=${splitCommand[1]}&f=sd2t2ohlcv&h&e=csv`)
           .then(result => {
@@ -76,8 +85,10 @@ io.on('connection', (socket) => {
           });
       }
     } else {
-      if (text.length > 0)
-        io.emit('messageToClients', { user, text });
+      if (text.length > 0) {
+        addMessage(user, text, time);
+        io.emit('messageToClients', { user, text, time });
+      }
     }
   });
 });
