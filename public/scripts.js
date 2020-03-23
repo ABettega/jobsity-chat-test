@@ -28,7 +28,7 @@ socket.on('messageToClients', ({ text, initial, user, time }) => {
   } else {
     chatLog.innerHTML += `<li class="message"><span><span class="user-msg">${user}</span>: ${text}</span><span class="time">${time}</span></li>`;
   }
-  if (chatLog.childElementCount > 10) {
+  if (chatLog.childElementCount > 49) {
     chatLog.removeChild(chatLog.firstElementChild);
     chatLog.firstElementChild.classList.add('initial-message');
   }

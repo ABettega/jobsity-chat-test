@@ -1,7 +1,7 @@
 const Messages = require('../models/Messages');
 
 const getMessages = () => {
-  return Messages.find().limit(10).sort({ 'created_at' : -1 });
+  return Messages.find().limit(50).sort({ 'created_at' : -1 });
 }
 
 const addMessage = (username, text, timestamp) => {
